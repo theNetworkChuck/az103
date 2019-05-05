@@ -1,9 +1,11 @@
 {
-  "if": {
-    "allof": [
+  "mode": "Indexed",
+  "policyRule": {
+    "if": {
+      "allof": [
         {
-       "field": "[concat('tags[', parameters('tagName'), ']')]",
-       "exists": "false"
+          "field": "[concat('tags[', parameters('tagName'), ']')]",
+          "exists": "false"
         }
       ]
     },
