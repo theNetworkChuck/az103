@@ -1,0 +1,7 @@
+{
+	"tagName": {
+		"type": "String",
+		"metadata": {
+			"displayName": "required value for Cost Center tag"
+		}
+	}
