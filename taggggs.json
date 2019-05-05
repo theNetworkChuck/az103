@@ -1,5 +1,4 @@
 {
-  "mode": "Indexed",
   "policyRule": {
     "if": {
       "allof": [
