@@ -1,10 +1,9 @@
 {
-  "policyRule": {
-    "if": {
-      "allof": [
+  "if": {
+    "allof": [
         {
-          "field": "[concat('tags[', parameters('tagName'), ']')]",
-          "exists": "false"
+       "field": "[concat('tags[', parameters('tagName'), ']')]",
+       "exists": "false"
         }
       ]
     },
