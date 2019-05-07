@@ -12,16 +12,5 @@
 
 	},
 
-	"tagValue": {
-
-		"type": "String",
-
-		"metadata": {
-
-			"description": "Value of the tag, such as headquarter"
-
-		}
-
-	}
 
 }
