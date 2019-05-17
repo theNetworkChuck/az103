@@ -1,0 +1,1046 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+    
+        "ncdns": {
+            "defaultValue": "[concat(uniqueString(subscription().subscriptionId))]",
+            "type": "String"
+        },
+        "virtualMachines_backend_name": {
+            "defaultValue": "backend",
+            "type": "String"
+        },
+        "virtualMachines_SQLSVR1_name": {
+            "defaultValue": "SQLSVR1",
+            "type": "String"
+        },
+        "virtualMachines_frontend1_name": {
+            "defaultValue": "frontend1",
+            "type": "String"
+        },
+        "virtualMachines_frontend2_name": {
+            "defaultValue": "frontend2",
+            "type": "String"
+        },
+        "loadBalancers_frenchpress_name": {
+            "defaultValue": "frenchpress",
+            "type": "String"
+        },
+        "networkInterfaces_backend_name": {
+            "defaultValue": "backend",
+            "type": "String"
+        },
+        "networkInterfaces_SQLSVR1_name": {
+            "defaultValue": "SQLSVR1",
+            "type": "String"
+        },
+        "virtualNetworks_coffeenet_name": {
+            "defaultValue": "coffeenet",
+            "type": "String"
+        },
+        "publicIPAddresses_frenchpress_name": {
+            "defaultValue": "frenchpress",
+            "type": "String"
+        },
+        "networkInterfaces_frontend1VMNic_name": {
+            "defaultValue": "frontend1VMNic",
+            "type": "String"
+        },
+        "networkInterfaces_frontend2VMNic_name": {
+            "defaultValue": "frontend2VMNic",
+            "type": "String"
+        },
+        "networkSecurityGroups_coffeesecure_name": {
+            "defaultValue": "coffeesecure",
+            "type": "String"
+        },
+        "networkSecurityGroups_canttouchthis_name": {
+            "defaultValue": "canttouchthis",
+            "type": "String"
+        },
+        "subnets_data_name": {
+            "defaultValue": "data",
+            "type": "String"
+        },
+        "subnets_default_name": {
+            "defaultValue": "default",
+            "type": "String"
+        },
+        "subnets_backend_name": {
+            "defaultValue": "backend",
+            "type": "String"
+        },
+        "subnets_frontend_name": {
+            "defaultValue": "frontend",
+            "type": "String"
+        },
+        "securityRules_http_name": {
+            "defaultValue": "http",
+            "type": "String"
+
+
+
+        }
+    },
+    "variables": {
+        "lbName": "frenchpress",
+        "bepoolName": "thepool",
+        "lbID": "[resourceId('Microsoft.Network/loadBalancers',variables('lbName'))]",
+        "bepoolID": "[concat(variables('lbID'),'/backendAddressPools/', variables('bepoolName'))]",
+        "fepoolName": "[concat(variables('lbName'), 'loadbalancerfrontend')]",
+        "feIpConfigName": "[concat(variables('fepoolName'), 'IpConfig')]",
+        "ncdns": "[concat(uniqueString(subscription().subscriptionId))]",
+        "feIpConfigId": "[concat(variables('lbID'),'/frontendIPConfigurations/', 'loadbalancerfrontend')]",
+        "httpProbeName": "frenchpress",
+        "_artifactsLocation": "https://raw.githubusercontent.com/theNetworkChuck/CBT/master/coffeewebserverconfig.txt",
+        "ncwebconfig": "I2Nsb3VkLWNvbmZpZwpwYWNrYWdlX3VwZ3JhZGU6IHRydWUKcGFja2FnZXM6CiAgLSBuZ2lueAogIC0gbm9kZWpzCiAgLSBucG0Kd3JpdGVfZmlsZXM6CiAgLSBvd25lcjogd3d3LWRhdGE6d3d3LWRhdGEKICAtIHBhdGg6IC9ldGMvbmdpbngvc2l0ZXMtYXZhaWxhYmxlL2RlZmF1bHQKICAgIGNvbnRlbnQ6IHwKICAgICAgc2VydmVyIHsKICAgICAgICBsaXN0ZW4gODA7CiAgICAgICAgbG9jYXRpb24gLyB7CiAgICAgICAgICBwcm94eV9wYXNzIGh0dHA6Ly9sb2NhbGhvc3Q6MzAwMDsKICAgICAgICAgIHByb3h5X2h0dHBfdmVyc2lvbiAxLjE7CiAgICAgICAgICBwcm94eV9zZXRfaGVhZGVyIFVwZ3JhZGUgJGh0dHBfdXBncmFkZTsKICAgICAgICAgIHByb3h5X3NldF9oZWFkZXIgQ29ubmVjdGlvbiBrZWVwLWFsaXZlOwogICAgICAgICAgcHJveHlfc2V0X2hlYWRlciBIb3N0ICRob3N0OwogICAgICAgICAgcHJveHlfY2FjaGVfYnlwYXNzICRodHRwX3VwZ3JhZGU7CiAgICAgICAgfQogICAgICB9CiAgLSBvd25lcjogY2J0bnVnZ2V0c2FkbWluOmNidG51Z2dldHNhZG1pbgogIC0gcGF0aDogL2hvbWUvY2J0bnVnZ2V0c2FkbWluL215YXBwL2luZGV4LmpzCiAgICBjb250ZW50OiB8CiAgICAgIHZhciBleHByZXNzID0gcmVxdWlyZSgnZXhwcmVzcycpCiAgICAgIHZhciBhcHAgPSBleHByZXNzKCkKICAgICAgdmFyIG9zID0gcmVxdWlyZSgnb3MnKTsKICAgICAgYXBwLmdldCgnLycsIGZ1bmN0aW9uIChyZXEsIHJlcykgewogICAgICAgIHJlcy5zZW5kKCdXZWxjb21lIHRvIE5ldHdvcmtDaHVjayBDb2ZmZWUhISBUaGluZ3MgYXJlIHN0aWxsIGJyZXdpbmcgYnV0IHRoaXMgaXMgYSBzdGFydCEnKQogICAgICB9KQogICAgICBhcHAubGlzdGVuKDMwMDAsIGZ1bmN0aW9uICgpIHsKICAgICAgICBjb25zb2xlLmxvZygnSGVsbG8gd29ybGQgYXBwIGxpc3RlbmluZyBvbiBwb3J0IDMwMDAhJykKICAgICAgfSkKcnVuY21kOgogIC0gc2VydmljZSBuZ2lueCByZXN0YXJ0CiAgLSBjZCAiL2hvbWUvY2J0bnVnZ2V0c2FkbWluL215YXBwIgogIC0gbnBtIGluaXQKICAtIG5wbSBpbnN0YWxsIGV4cHJlc3MgLXkKICAtIG5vZGVqcyBpbmRleC5qcwo="
+        
+    },
+    "resources": [
+        {
+            "comments": "Generalized from resource: '/subscriptions/52b31a1f-8d0d-44d8-8ab5-0da0e786239b/resourceGroups/nccoffeewebsite/providers/Microsoft.Compute/virtualMachines/backend'.",
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[parameters('virtualMachines_backend_name')]",
+            "apiVersion": "2018-10-01",
+            "location": "eastus2",
+            "scale": null,
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "Standard_B1S"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "Canonical",
+                        "offer": "UbuntuServer",
+                        "sku": "16.04-LTS",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "osType": "Linux",
+                        "name": "[concat(parameters('virtualMachines_backend_name'),'_OsDisk_1_f9846e95f91c426c94ea94e9c45ac824')]",
+                        "createOption": "FromImage",
+                        "caching": "ReadWrite"
+                    },
+                    "dataDisks": []
+                },
+                "osProfile": {
+                    "computerName": "[parameters('virtualMachines_backend_name')]",
+                    "adminUsername": "cbtnuggetsadmin",
+                    "adminPassword": "CBTnu$$ets!@#4",
+                    "linuxConfiguration": {
+                        "disablePasswordAuthentication": false,
+                        "provisionVMAgent": true
+                    },
+                    "secrets": [],
+                    "allowExtensionOperations": true
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_backend_name'))]"
+                        }
+                    ]
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_backend_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/52b31a1f-8d0d-44d8-8ab5-0da0e786239b/resourceGroups/nccoffeewebsite/providers/Microsoft.Compute/virtualMachines/frontend1'.",
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[parameters('virtualMachines_frontend1_name')]",
+            "apiVersion": "2018-10-01",
+            "location": "eastus2",
+            "tags": {},
+            "scale": null,
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "Standard_B1S"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "Canonical",
+                        "offer": "UbuntuServer",
+                        "sku": "18.04-LTS",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "osType": "Linux",
+                        "name": "[concat(parameters('virtualMachines_frontend1_name'),'_OsDisk_1_0076aa6783b649baaa6a370387db6eda')]",
+                        "createOption": "FromImage",
+                        "caching": "ReadWrite"
+                    },
+                    "dataDisks": []
+                },
+                "osProfile": {
+                    "computerName": "[parameters('virtualMachines_frontend1_name')]",
+                    "adminUsername": "cbtnuggetsadmin",
+                    "adminPassword": "CBTnu$$ets!@#4",
+                    "customData": "[variables('ncwebconfig')]",
+                    "linuxConfiguration": {
+                        "disablePasswordAuthentication": false,
+                        "provisionVMAgent": true
+                    },
+                    "secrets": [],
+                    "allowExtensionOperations": true
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_frontend1VMNic_name'))]"
+                        }
+                    ]
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_frontend1VMNic_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/52b31a1f-8d0d-44d8-8ab5-0da0e786239b/resourceGroups/nccoffeewebsite/providers/Microsoft.Compute/virtualMachines/frontend2'.",
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[parameters('virtualMachines_frontend2_name')]",
+            "apiVersion": "2018-10-01",
+            "location": "eastus2",
+            "tags": {},
+            "scale": null,
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "Standard_B1S"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "Canonical",
+                        "offer": "UbuntuServer",
+                        "sku": "18.04-LTS",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "osType": "Linux",
+                        "name": "[concat(parameters('virtualMachines_frontend2_name'),'_OsDisk_1_ef74a655f452440790981fa0be74c98f')]",
+                        "createOption": "FromImage",
+                        "caching": "ReadWrite"
+                    },
+                    "dataDisks": []
+                },
+                "osProfile": {
+                    "computerName": "[parameters('virtualMachines_frontend2_name')]",
+                    "adminUsername": "cbtnuggetsadmin",
+                    "adminPassword": "CBTnu$$ets!@#4",
+                    "customData": "[variables('ncwebconfig')]",
+                    "linuxConfiguration": {
+                        "disablePasswordAuthentication": false,
+                        "provisionVMAgent": true
+                    },
+                    "secrets": [],
+                    "allowExtensionOperations": true
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_frontend2VMNic_name'))]"
+                        }
+                    ]
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_frontend2VMNic_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/52b31a1f-8d0d-44d8-8ab5-0da0e786239b/resourceGroups/nccoffeewebsite/providers/Microsoft.Compute/virtualMachines/SQLSVR1'.",
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[parameters('virtualMachines_SQLSVR1_name')]",
+            "apiVersion": "2018-10-01",
+            "location": "eastus2",
+            "scale": null,
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "Standard_B1S"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "Canonical",
+                        "offer": "UbuntuServer",
+                        "sku": "16.04-LTS",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "osType": "Linux",
+                        "name": "[concat(parameters('virtualMachines_SQLSVR1_name'),'_OsDisk_1_35b2dde7274e42e4bc0ec029ea7bb9ab')]",
+                        "createOption": "FromImage",
+                        "caching": "ReadWrite"
+                    },
+                    "dataDisks": []
+                },
+                "osProfile": {
+                    "computerName": "[parameters('virtualMachines_SQLSVR1_name')]",
+                    "adminUsername": "cbtnuggetsadmin",
+                    "adminPassword": "CBTnu$$ets!@#4",
+                    "linuxConfiguration": {
+                        "disablePasswordAuthentication": false,
+                        "provisionVMAgent": true
+                    },
+                    "secrets": [],
+                    "allowExtensionOperations": true
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_SQLSVR1_name'))]"
+                        }
+                    ]
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_SQLSVR1_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/52b31a1f-8d0d-44d8-8ab5-0da0e786239b/resourceGroups/nccoffeewebsite/providers/Microsoft.Network/loadBalancers/frenchpress'.",
+            "type": "Microsoft.Network/loadBalancers",
+            "sku": {
+                "name": "Standard",
+                "tier": "Regional"
+            },
+            "name": "[parameters('loadBalancers_frenchpress_name')]",
+            "apiVersion": "2018-10-01",
+            "location": "eastus2",
+            "tags": {},
+            "scale": null,
+            "properties": {
+                "provisioningState": "Succeeded",
+                "resourceGuid": "7dbb779d-bfe4-45ad-9869-0e6f7e3fac30",
+                "frontendIPConfigurations": [
+                    {
+                        "name": "LoadBalancerFrontEnd",
+                        "etag": "W/\"1624dffa-5596-47a3-ba4f-a5695619d90b\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_frenchpress_name'))]"
+                            }
+                        }
+                    }
+                ],
+                "backendAddressPools": [
+                    {
+                        "name": "thepool",
+                        "etag": "W/\"1624dffa-5596-47a3-ba4f-a5695619d90b\"",
+                        "properties": {
+                            "provisioningState": "Succeeded"
+                        }
+                    }
+                ],
+                "loadBalancingRules": [
+                    {
+                        "name": "[parameters('loadBalancers_frenchpress_name')]",
+                        "etag": "W/\"1624dffa-5596-47a3-ba4f-a5695619d90b\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "frontendIPConfiguration": {
+                                "id": "[variables('feIpConfigId')]"
+                            },
+                            "frontendPort": 80,
+                            "backendPort": 80,
+                            "enableFloatingIP": false,
+                            "idleTimeoutInMinutes": 4,
+                            "protocol": "Tcp",
+                            "enableTcpReset": false,
+                            "loadDistribution": "Default",
+                            "disableOutboundSnat": false,
+                            "backendAddressPool": {
+                                "id": "[variables('bepoolID')]"
+                            },
+                            "probe": {
+                                "id": "[concat(variables('lbId'), '/probes/', variables('httpProbeName'))]"
+                            }
+                        }
+                    }
+                ],
+                "probes": [
+                    {
+                        "name": "[parameters('loadBalancers_frenchpress_name')]",
+                        "etag": "W/\"1624dffa-5596-47a3-ba4f-a5695619d90b\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "protocol": "Tcp",
+                            "port": 80,
+                            "intervalInSeconds": 5,
+                            "numberOfProbes": 2
+                        }
+                    }
+                ],
+                "inboundNatRules": [],
+                "outboundRules": [],
+                "inboundNatPools": []
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_frenchpress_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/52b31a1f-8d0d-44d8-8ab5-0da0e786239b/resourceGroups/nccoffeewebsite/providers/Microsoft.Network/networkInterfaces/backend'.",
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[parameters('networkInterfaces_backend_name')]",
+            "apiVersion": "2018-10-01",
+            "location": "eastus2",
+            "scale": null,
+            "properties": {
+                "provisioningState": "Succeeded",
+                "resourceGuid": "464c28be-155b-4d3d-b81d-9a10af84ebf2",
+                "ipConfigurations": [
+                    {
+                        "name": "[parameters('networkInterfaces_backend_name')]",
+                        "etag": "W/\"0c501820-5c6a-44a4-acfd-42f0d03da2f7\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "privateIPAddress": "10.0.2.4",
+                            "privateIPAllocationMethod": "Dynamic",
+                            "subnet": {
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_coffeenet_name'), parameters('subnets_backend_name'))]"
+                            },
+                            "primary": true,
+                            "privateIPAddressVersion": "IPv4"
+                        }
+                    }
+                ],
+                "dnsSettings": {
+                    "dnsServers": [],
+                    "appliedDnsServers": [],
+                    "internalDomainNameSuffix": "hd2tyshhg2se1nrebqpeqcha3c.cx.internal.cloudapp.net"
+                },
+                "macAddress": "00-0D-3A-04-A2-2F",
+                "enableAcceleratedNetworking": false,
+                "enableIPForwarding": false,
+                "networkSecurityGroup": {
+                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_canttouchthis_name'))]"
+                },
+                "primary": true,
+                "tapConfigurations": []
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_coffeenet_name'), parameters('subnets_backend_name'))]",
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_canttouchthis_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/52b31a1f-8d0d-44d8-8ab5-0da0e786239b/resourceGroups/nccoffeewebsite/providers/Microsoft.Network/networkInterfaces/frontend1VMNic'.",
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[parameters('networkInterfaces_frontend1VMNic_name')]",
+            "apiVersion": "2018-10-01",
+            "location": "eastus2",
+            "tags": {},
+            "scale": null,
+            "properties": {
+                "provisioningState": "Succeeded",
+                "resourceGuid": "356c9371-972a-4ab6-8921-f79916eccbb8",
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfigfrontend1",
+                        "etag": "W/\"5f0f172c-6688-4c70-bca5-eb9cb0265a6f\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "privateIPAddress": "10.0.1.6",
+                            "privateIPAllocationMethod": "Dynamic",
+                            "subnet": {
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_coffeenet_name'), parameters('subnets_frontend_name'))]"
+                            },
+                            "primary": true,
+                            "privateIPAddressVersion": "IPv4",
+                            "loadBalancerBackendAddressPools": [
+                                {
+                                    "id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('loadBalancers_frenchpress_name')), '/backendAddressPools/thepool')]"
+                                }
+                            ]
+                        }
+                    }
+                ],
+                "dnsSettings": {
+                    "dnsServers": [],
+                    "appliedDnsServers": [],
+                    "internalDomainNameSuffix": "hd2tyshhg2se1nrebqpeqcha3c.cx.internal.cloudapp.net"
+                },
+                "macAddress": "00-0D-3A-0D-34-CF",
+                "enableAcceleratedNetworking": false,
+                "enableIPForwarding": false,
+                "networkSecurityGroup": {
+                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_coffeesecure_name'))]"
+                },
+                "primary": true,
+                "tapConfigurations": []
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_coffeenet_name'), parameters('subnets_frontend_name'))]",
+                "[resourceId('Microsoft.Network/loadBalancers', parameters('loadBalancers_frenchpress_name'))]",
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_coffeesecure_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/52b31a1f-8d0d-44d8-8ab5-0da0e786239b/resourceGroups/nccoffeewebsite/providers/Microsoft.Network/networkInterfaces/frontend2VMNic'.",
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[parameters('networkInterfaces_frontend2VMNic_name')]",
+            "apiVersion": "2018-10-01",
+            "location": "eastus2",
+            "tags": {},
+            "scale": null,
+            "properties": {
+                "provisioningState": "Succeeded",
+                "resourceGuid": "9f3e35c1-1aad-4010-97bd-fe654e454af3",
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfigfrontend2",
+                        "etag": "W/\"8c58ec36-d150-46f8-bd7d-33c084f83766\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "privateIPAddress": "10.0.1.7",
+                            "privateIPAllocationMethod": "Dynamic",
+                            "subnet": {
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_coffeenet_name'), parameters('subnets_frontend_name'))]"
+                            },
+                            "primary": true,
+                            "privateIPAddressVersion": "IPv4",
+                            "loadBalancerBackendAddressPools": [
+                                {
+                                    "id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('loadBalancers_frenchpress_name')), '/backendAddressPools/thepool')]"
+                                }
+                            ]
+                        }
+                    }
+                ],
+                "dnsSettings": {
+                    "dnsServers": [],
+                    "appliedDnsServers": [],
+                    "internalDomainNameSuffix": "hd2tyshhg2se1nrebqpeqcha3c.cx.internal.cloudapp.net"
+                },
+                "macAddress": "00-0D-3A-04-71-A9",
+                "enableAcceleratedNetworking": false,
+                "enableIPForwarding": false,
+                "networkSecurityGroup": {
+                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_coffeesecure_name'))]"
+                },
+                "primary": true,
+                "tapConfigurations": []
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_coffeenet_name'), parameters('subnets_frontend_name'))]",
+                "[resourceId('Microsoft.Network/loadBalancers', parameters('loadBalancers_frenchpress_name'))]",
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_coffeesecure_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/52b31a1f-8d0d-44d8-8ab5-0da0e786239b/resourceGroups/nccoffeewebsite/providers/Microsoft.Network/networkInterfaces/SQLSVR1'.",
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[parameters('networkInterfaces_SQLSVR1_name')]",
+            "apiVersion": "2018-10-01",
+            "location": "eastus2",
+            "scale": null,
+            "properties": {
+                "provisioningState": "Succeeded",
+                "resourceGuid": "d756ea9c-9515-48f2-8d93-c701654922e7",
+                "ipConfigurations": [
+                    {
+                        "name": "[parameters('networkInterfaces_SQLSVR1_name')]",
+                        "etag": "W/\"87f47e7e-5a15-4c1e-974b-1d9fe113ee7c\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "privateIPAddress": "10.0.3.4",
+                            "privateIPAllocationMethod": "Dynamic",
+                            "subnet": {
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_coffeenet_name'), parameters('subnets_data_name'))]"
+                            },
+                            "primary": true,
+                            "privateIPAddressVersion": "IPv4"
+                        }
+                    }
+                ],
+                "dnsSettings": {
+                    "dnsServers": [],
+                    "appliedDnsServers": [],
+                    "internalDomainNameSuffix": "hd2tyshhg2se1nrebqpeqcha3c.cx.internal.cloudapp.net"
+                },
+                "macAddress": "00-0D-3A-04-AC-B8",
+                "enableAcceleratedNetworking": false,
+                "enableIPForwarding": false,
+                "networkSecurityGroup": {
+                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_canttouchthis_name'))]"
+                },
+                "primary": true,
+                "tapConfigurations": []
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_coffeenet_name'), parameters('subnets_data_name'))]",
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_canttouchthis_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/52b31a1f-8d0d-44d8-8ab5-0da0e786239b/resourceGroups/nccoffeewebsite/providers/Microsoft.Network/networkSecurityGroups/canttouchthis'.",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "name": "[parameters('networkSecurityGroups_canttouchthis_name')]",
+            "apiVersion": "2018-10-01",
+            "location": "eastus2",
+            "scale": null,
+            "properties": {
+                "provisioningState": "Succeeded",
+                "resourceGuid": "7652b190-97b5-445d-8a37-8eb9a0becefc",
+                "securityRules": [],
+                "defaultSecurityRules": [
+                    {
+                        "name": "AllowVnetInBound",
+                        "etag": "W/\"805991f0-9efa-4cae-ab25-67699930074b\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "description": "Allow inbound traffic from all VMs in VNET",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "VirtualNetwork",
+                            "destinationAddressPrefix": "VirtualNetwork",
+                            "access": "Allow",
+                            "priority": 65000,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    },
+                    {
+                        "name": "AllowAzureLoadBalancerInBound",
+                        "etag": "W/\"805991f0-9efa-4cae-ab25-67699930074b\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "description": "Allow inbound traffic from azure load balancer",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "AzureLoadBalancer",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 65001,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    },
+                    {
+                        "name": "DenyAllInBound",
+                        "etag": "W/\"805991f0-9efa-4cae-ab25-67699930074b\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "description": "Deny all inbound traffic",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Deny",
+                            "priority": 65500,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    },
+                    {
+                        "name": "AllowVnetOutBound",
+                        "etag": "W/\"805991f0-9efa-4cae-ab25-67699930074b\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "description": "Allow outbound traffic from all VMs to all VMs in VNET",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "VirtualNetwork",
+                            "destinationAddressPrefix": "VirtualNetwork",
+                            "access": "Allow",
+                            "priority": 65000,
+                            "direction": "Outbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    },
+                    {
+                        "name": "AllowInternetOutBound",
+                        "etag": "W/\"805991f0-9efa-4cae-ab25-67699930074b\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "description": "Allow outbound traffic from all VMs to Internet",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "Internet",
+                            "access": "Allow",
+                            "priority": 65001,
+                            "direction": "Outbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    },
+                    {
+                        "name": "DenyAllOutBound",
+                        "etag": "W/\"805991f0-9efa-4cae-ab25-67699930074b\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "description": "Deny all outbound traffic",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Deny",
+                            "priority": 65500,
+                            "direction": "Outbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    }
+                ]
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/52b31a1f-8d0d-44d8-8ab5-0da0e786239b/resourceGroups/nccoffeewebsite/providers/Microsoft.Network/networkSecurityGroups/coffeesecure'.",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "name": "[parameters('networkSecurityGroups_coffeesecure_name')]",
+            "apiVersion": "2018-10-01",
+            "location": "eastus2",
+            "scale": null,
+            "properties": {
+                "provisioningState": "Succeeded",
+                "resourceGuid": "825c7926-65c2-450f-9018-b27e3f39239a",
+                "securityRules": [
+                    {
+                        "name": "http",
+                        "etag": "W/\"23cae7e3-8278-4ad0-90e2-656a8803fa30\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "80",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 100,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    }
+                ],
+                "defaultSecurityRules": [
+                    {
+                        "name": "AllowVnetInBound",
+                        "etag": "W/\"23cae7e3-8278-4ad0-90e2-656a8803fa30\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "description": "Allow inbound traffic from all VMs in VNET",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "VirtualNetwork",
+                            "destinationAddressPrefix": "VirtualNetwork",
+                            "access": "Allow",
+                            "priority": 65000,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    },
+                    {
+                        "name": "AllowAzureLoadBalancerInBound",
+                        "etag": "W/\"23cae7e3-8278-4ad0-90e2-656a8803fa30\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "description": "Allow inbound traffic from azure load balancer",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "AzureLoadBalancer",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 65001,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    },
+                    {
+                        "name": "DenyAllInBound",
+                        "etag": "W/\"23cae7e3-8278-4ad0-90e2-656a8803fa30\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "description": "Deny all inbound traffic",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Deny",
+                            "priority": 65500,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    },
+                    {
+                        "name": "AllowVnetOutBound",
+                        "etag": "W/\"23cae7e3-8278-4ad0-90e2-656a8803fa30\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "description": "Allow outbound traffic from all VMs to all VMs in VNET",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "VirtualNetwork",
+                            "destinationAddressPrefix": "VirtualNetwork",
+                            "access": "Allow",
+                            "priority": 65000,
+                            "direction": "Outbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    },
+                    {
+                        "name": "AllowInternetOutBound",
+                        "etag": "W/\"23cae7e3-8278-4ad0-90e2-656a8803fa30\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "description": "Allow outbound traffic from all VMs to Internet",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "Internet",
+                            "access": "Allow",
+                            "priority": 65001,
+                            "direction": "Outbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    },
+                    {
+                        "name": "DenyAllOutBound",
+                        "etag": "W/\"23cae7e3-8278-4ad0-90e2-656a8803fa30\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "description": "Deny all outbound traffic",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Deny",
+                            "priority": 65500,
+                            "direction": "Outbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    }
+                ]
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/52b31a1f-8d0d-44d8-8ab5-0da0e786239b/resourceGroups/nccoffeewebsite/providers/Microsoft.Network/publicIPAddresses/frenchpress'.",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "sku": {
+                "name": "Standard",
+                "tier": "Regional"
+            },
+            "name": "[parameters('publicIPAddresses_frenchpress_name')]",
+            "apiVersion": "2018-10-01",
+            "location": "eastus2",
+            "tags": {},
+            "scale": null,
+            "properties": {
+                "publicIPAddressVersion": "IPv4",
+                "publicIPAllocationMethod": "Static",
+                "dnsSettings": {
+                    "domainNameLabel": "[parameters('ncdns')]"
+                },
+                "idleTimeoutInMinutes": 4,
+                "ipTags": []
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/52b31a1f-8d0d-44d8-8ab5-0da0e786239b/resourceGroups/nccoffeewebsite/providers/Microsoft.Network/virtualNetworks/coffeenet'.",
+            "type": "Microsoft.Network/virtualNetworks",
+            "name": "[parameters('virtualNetworks_coffeenet_name')]",
+            "apiVersion": "2018-10-01",
+            "location": "eastus2",
+            "location": "eastus2",
+            "scale": null,
+            "properties": {
+                "provisioningState": "Succeeded",
+                "resourceGuid": "483cf938-37e7-4d24-b624-0c1e4808e0ea",
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "10.0.0.0/16"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "default",
+                        "etag": "W/\"c231cc83-f3ed-4dd4-a740-4bbf6d37ff90\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "addressPrefix": "10.0.0.0/24",
+                            "delegations": []
+                        }
+                    },
+                    {
+                        "name": "frontend",
+                        "etag": "W/\"c231cc83-f3ed-4dd4-a740-4bbf6d37ff90\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "addressPrefix": "10.0.1.0/24",
+                            "serviceEndpoints": [],
+                            "delegations": []
+                        }
+                    },
+                    {
+                        "name": "backend",
+                        "etag": "W/\"c231cc83-f3ed-4dd4-a740-4bbf6d37ff90\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "addressPrefix": "10.0.2.0/24",
+                            "serviceEndpoints": [],
+                            "delegations": []
+                        }
+                    },
+                    {
+                        "name": "data",
+                        "etag": "W/\"c231cc83-f3ed-4dd4-a740-4bbf6d37ff90\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "addressPrefix": "10.0.3.0/24",
+                            "serviceEndpoints": [],
+                            "delegations": []
+                        }
+                    }
+                ],
+                "virtualNetworkPeerings": [],
+                "enableDdosProtection": false,
+                "enableVmProtection": false
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/52b31a1f-8d0d-44d8-8ab5-0da0e786239b/resourceGroups/nccoffeewebsite/providers/Microsoft.Network/networkSecurityGroups/coffeesecure/securityRules/http'.",
+            "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+            "name": "[concat(parameters('networkSecurityGroups_coffeesecure_name'), '/', parameters('securityRules_http_name'))]",
+            "apiVersion": "2018-10-01",
+            "scale": null,
+            "properties": {
+                "provisioningState": "Succeeded",
+                "protocol": "*",
+                "sourcePortRange": "*",
+                "destinationPortRange": "80",
+                "sourceAddressPrefix": "*",
+                "destinationAddressPrefix": "*",
+                "access": "Allow",
+                "priority": 100,
+                "direction": "Inbound",
+                "sourcePortRanges": [],
+                "destinationPortRanges": [],
+                "sourceAddressPrefixes": [],
+                "destinationAddressPrefixes": []
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_coffeesecure_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/52b31a1f-8d0d-44d8-8ab5-0da0e786239b/resourceGroups/nccoffeewebsite/providers/Microsoft.Network/virtualNetworks/coffeenet/subnets/default'.",
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "name": "[concat(parameters('virtualNetworks_coffeenet_name'), '/', parameters('subnets_default_name'))]",
+            "apiVersion": "2018-10-01",
+            "scale": null,
+            "properties": {
+                "provisioningState": "Succeeded",
+                "addressPrefix": "10.0.0.0/24",
+                "delegations": []
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_coffeenet_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/52b31a1f-8d0d-44d8-8ab5-0da0e786239b/resourceGroups/nccoffeewebsite/providers/Microsoft.Network/virtualNetworks/coffeenet/subnets/frontend'.",
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "name": "[concat(parameters('virtualNetworks_coffeenet_name'), '/', parameters('subnets_frontend_name'))]",
+            "apiVersion": "2018-10-01",
+            "scale": null,
+            "properties": {
+                "provisioningState": "Succeeded",
+                "addressPrefix": "10.0.1.0/24",
+                "serviceEndpoints": [],
+                "delegations": []
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_coffeenet_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/52b31a1f-8d0d-44d8-8ab5-0da0e786239b/resourceGroups/nccoffeewebsite/providers/Microsoft.Network/virtualNetworks/coffeenet/subnets/backend'.",
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "name": "[concat(parameters('virtualNetworks_coffeenet_name'), '/', parameters('subnets_backend_name'))]",
+            "apiVersion": "2018-10-01",
+            "scale": null,
+            "properties": {
+                "provisioningState": "Succeeded",
+                "addressPrefix": "10.0.2.0/24",
+                "serviceEndpoints": [],
+                "delegations": []
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_coffeenet_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/52b31a1f-8d0d-44d8-8ab5-0da0e786239b/resourceGroups/nccoffeewebsite/providers/Microsoft.Network/virtualNetworks/coffeenet/subnets/data'.",
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "name": "[concat(parameters('virtualNetworks_coffeenet_name'), '/', parameters('subnets_data_name'))]",
+            "apiVersion": "2018-10-01",
+            "scale": null,
+            "properties": {
+                "provisioningState": "Succeeded",
+                "addressPrefix": "10.0.3.0/24",
+                "serviceEndpoints": [],
+                "delegations": []
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_coffeenet_name'))]"
+            ]
+        }
+    ]
+}
