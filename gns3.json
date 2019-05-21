@@ -193,15 +193,12 @@
                 "tier": "Regional"
             },
             "properties": {
-                "provisioningState": "Succeeded",
-                "resourceGuid": "2734ab5c-2289-49dc-9cee-67dd9f57e212",
-                "ipAddress": "40.124.46.207",
+                "provisioningState": "Succeeded"
                 "publicIPAddressVersion": "IPv4",
-                "publicIPAllocationMethod": "Static",
+                "publicIPAllocationMethod": "Dynamic",
                 "idleTimeoutInMinutes": 4,
                 "dnsSettings": {
-                    "domainNameLabel": "ncgns3serverccie",
-                    "fqdn": "ncgns3serverccie.southcentralus.cloudapp.azure.com"
+                    "domainNameLabel": "[uniqueString( resourceGroup().id, deployment().name )]",
                 },
                 "ipTags": []
             }
