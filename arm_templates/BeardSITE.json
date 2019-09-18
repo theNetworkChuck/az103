@@ -1,6 +1,6 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-    "contentVersion": "1.0.0.4",
+    "contentVersion": "1.0.0.5",
     "parameters": {
         "virtualMachines_backendSERVER_name": {
             "defaultValue": "backendSERVER",
@@ -41,7 +41,7 @@
             "type": "Microsoft.Network/networkSecurityGroups",
             "apiVersion": "2019-06-01",
             "name": "[parameters('networkSecurityGroups_backendSERVER_nsg_name')]",
-            "location": "eastus2",
+            "location": "[resourceGroup().location]",
             "tags": {
                 "BeardSite": "[resourceGroup().tags.BeardSite]"
             },
@@ -215,9 +215,9 @@
             "type": "Microsoft.Network/networkSecurityGroups",
             "apiVersion": "2019-06-01",
             "name": "[parameters('networkSecurityGroups_frontendSERVER_nsg_name')]",
-            "location": "eastus2",
+            "location": "[resourceGroup().location]",
             "tags": {
-                "BeardSite": "beardeast"
+                "BeardSite": "[resourceGroup().tags.BeardSite]"
             },
             "properties": {
                 "securityRules": [
@@ -390,9 +390,9 @@
             "type": "Microsoft.Network/publicIPAddresses",
             "apiVersion": "2019-06-01",
             "name": "[parameters('publicIPAddresses_frontendSERVER_ip_name')]",
-            "location": "eastus2",
+            "location": "[resourceGroup().location]",
             "tags": {
-                "BeardSite": "beardeast"
+                "BeardSite": "[resourceGroup().tags.BeardSite]"
             },
             "sku": {
                 "name": "Basic",
@@ -409,9 +409,9 @@
             "type": "Microsoft.Network/virtualNetworks",
             "apiVersion": "2019-06-01",
             "name": "[parameters('virtualNetworks_BeardEast_vnet_name')]",
-            "location": "eastus2",
+            "location": "[resourceGroup().location]",
             "tags": {
-                "BeardSite": "beardeast"
+                "BeardSite": "[resourceGroup().tags.BeardSite]"
             },
             "properties": {
                 "provisioningState": "Succeeded",
@@ -441,12 +441,12 @@
             "type": "Microsoft.Compute/virtualMachines",
             "apiVersion": "2019-03-01",
             "name": "[parameters('virtualMachines_backendSERVER_name')]",
-            "location": "eastus2",
+            "location": "[resourceGroup().location]",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_backendserver335_name'))]"
             ],
             "tags": {
-                "BeardSite": "beardeast"
+                "BeardSite": "[resourceGroup().tags.BeardSite]"
             },
             "properties": {
                 "hardwareProfile": {
@@ -495,12 +495,12 @@
             "type": "Microsoft.Compute/virtualMachines",
             "apiVersion": "2019-03-01",
             "name": "[parameters('virtualMachines_frontendSERVER_name')]",
-            "location": "eastus2",
+            "location": "[resourceGroup().location]",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_frontendserver797_name'))]"
             ],
             "tags": {
-                "BeardSite": "beardeast"
+                "BeardSite": "[resourceGroup().tags.BeardSite]"
             },
             "properties": {
                 "hardwareProfile": {
@@ -652,13 +652,13 @@
             "type": "Microsoft.Network/networkInterfaces",
             "apiVersion": "2019-06-01",
             "name": "[parameters('networkInterfaces_backendserver335_name')]",
-            "location": "eastus2",
+            "location": "[resourceGroup().location]",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_BeardEast_vnet_name'), 'default')]",
                 "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_backendSERVER_nsg_name'))]"
             ],
             "tags": {
-                "BeardSite": "beardeast"
+                "BeardSite": "[resourceGroup().tags.BeardSite]"
             },
             "properties": {
                 "ipConfigurations": [
@@ -694,14 +694,14 @@
             "type": "Microsoft.Network/networkInterfaces",
             "apiVersion": "2019-06-01",
             "name": "[parameters('networkInterfaces_frontendserver797_name')]",
-            "location": "eastus2",
+            "location": "[resourceGroup().location]",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_frontendSERVER_ip_name'))]",
                 "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_BeardEast_vnet_name'), 'default')]",
                 "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_frontendSERVER_nsg_name'))]"
             ],
             "tags": {
-                "BeardSite": "beardeast"
+                "BeardSite": "[resourceGroup().tags.BeardSite]"
             },
             "properties": {
                 "ipConfigurations": [
