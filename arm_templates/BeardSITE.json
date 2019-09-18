@@ -1,6 +1,6 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-    "contentVersion": "1.0.0.3",
+    "contentVersion": "1.0.0.4",
     "parameters": {
         "virtualMachines_backendSERVER_name": {
             "defaultValue": "backendSERVER",
@@ -43,7 +43,7 @@
             "name": "[parameters('networkSecurityGroups_backendSERVER_nsg_name')]",
             "location": "eastus2",
             "tags": {
-                "BeardSite": "beardeast"
+                "BeardSite": "[resourceGroup().tags.BeardSite]"
             },
             "properties": {
                 "securityRules": [
@@ -86,7 +86,7 @@
                         "properties": {
                             "protocol": "TCP",
                             "sourcePortRange": "*",
-                            "destinationPortRange": "3392",
+                            "destinationPortRange": "3391",
                             "sourceAddressPrefix": "*",
                             "destinationAddressPrefix": "*",
                             "access": "Allow",
