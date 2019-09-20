@@ -782,12 +782,12 @@
     ],
     "outputs": {
         "result": {
-            "value": "It worked!",
-            "type": "string"
+            "type": "string",
+            "value": "It worked!"
         },
         "Resources Created": {
-            "value": "[parameters('networkSecurityGroups_backendSERVER_nsg_name')]",
-            "type": "string"
+            "type": "string",
+            "value": "[parameters('networkSecurityGroups_backendSERVER_nsg_name')]"
         }
     }
 }
