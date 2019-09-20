@@ -786,7 +786,8 @@
             "type": "string"
         },
         "Resources Created": {
-            "value": "[parameters('networkSecurityGroups_backendSERVER_nsg_name')]"
+            "value": "[parameters('networkSecurityGroups_backendSERVER_nsg_name')]",
+            "type": "string"
         }
     }
 }
