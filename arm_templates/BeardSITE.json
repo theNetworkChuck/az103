@@ -1,6 +1,6 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-    "contentVersion": "1.0.0.5",
+    "contentVersion": "1.0.0.0",
     "parameters": {
         "virtualMachines_backendSERVER_name": {
             "defaultValue": "backendSERVER",
@@ -10,16 +10,20 @@
             "defaultValue": "frontendSERVER",
             "type": "String"
         },
-        "virtualNetworks_BeardEast_vnet_name": {
-            "defaultValue": "BeardEast-vnet",
+        "virtualNetworks_BeardSite_vnet_name": {
+            "defaultValue": "BeardSite-vnet",
             "type": "String"
         },
-        "networkInterfaces_backendserver335_name": {
-            "defaultValue": "backendserver335",
+        "networkInterfaces_backendserver889_name": {
+            "defaultValue": "backendserver889",
             "type": "String"
         },
-        "networkInterfaces_frontendserver797_name": {
-            "defaultValue": "frontendserver797",
+        "publicIPAddresses_backendSERVER_ip_name": {
+            "defaultValue": "backendSERVER-ip",
+            "type": "String"
+        },
+        "networkInterfaces_frontendserver859_name": {
+            "defaultValue": "frontendserver859",
             "type": "String"
         },
         "publicIPAddresses_frontendSERVER_ip_name": {
@@ -41,15 +45,18 @@
             "type": "Microsoft.Network/networkSecurityGroups",
             "apiVersion": "2019-06-01",
             "name": "[parameters('networkSecurityGroups_backendSERVER_nsg_name')]",
-            "location": "[resourceGroup().location]",
+            "location": "southcentralus",
             "tags": {
-                "BeardSite": "[resourceGroup().tags.BeardSite]"
+                "BeardSite": "Main"
             },
             "properties": {
+                "provisioningState": "Succeeded",
                 "securityRules": [
                     {
                         "name": "RDP",
+                        "etag": "W/\"2dcf6c76-d885-45a2-8367-8c4fcada94e9\"",
                         "properties": {
+                            "provisioningState": "Succeeded",
                             "protocol": "TCP",
                             "sourcePortRange": "*",
                             "destinationPortRange": "3389",
@@ -63,46 +70,14 @@
                             "sourceAddressPrefixes": [],
                             "destinationAddressPrefixes": []
                         }
-                    },
-                    {
-                        "name": "RDPS",
-                        "properties": {
-                            "protocol": "TCP",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "3390",
-                            "sourceAddressPrefix": "*",
-                            "destinationAddressPrefix": "*",
-                            "access": "Allow",
-                            "priority": 301,
-                            "direction": "Inbound",
-                            "sourcePortRanges": [],
-                            "destinationPortRanges": [],
-                            "sourceAddressPrefixes": [],
-                            "destinationAddressPrefixes": []
-                        }
-                    },
-                    {
-                        "name": "RDPSS",
-                        "properties": {
-                            "protocol": "TCP",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "3391",
-                            "sourceAddressPrefix": "*",
-                            "destinationAddressPrefix": "*",
-                            "access": "Allow",
-                            "priority": 302,
-                            "direction": "Inbound",
-                            "sourcePortRanges": [],
-                            "destinationPortRanges": [],
-                            "sourceAddressPrefixes": [],
-                            "destinationAddressPrefixes": []
-                        }
-                    }        
+                    }
                 ],
                 "defaultSecurityRules": [
                     {
                         "name": "AllowVnetInBound",
+                        "etag": "W/\"2dcf6c76-d885-45a2-8367-8c4fcada94e9\"",
                         "properties": {
+                            "provisioningState": "Succeeded",
                             "description": "Allow inbound traffic from all VMs in VNET",
                             "protocol": "*",
                             "sourcePortRange": "*",
@@ -120,7 +95,9 @@
                     },
                     {
                         "name": "AllowAzureLoadBalancerInBound",
+                        "etag": "W/\"2dcf6c76-d885-45a2-8367-8c4fcada94e9\"",
                         "properties": {
+                            "provisioningState": "Succeeded",
                             "description": "Allow inbound traffic from azure load balancer",
                             "protocol": "*",
                             "sourcePortRange": "*",
@@ -138,7 +115,9 @@
                     },
                     {
                         "name": "DenyAllInBound",
+                        "etag": "W/\"2dcf6c76-d885-45a2-8367-8c4fcada94e9\"",
                         "properties": {
+                            "provisioningState": "Succeeded",
                             "description": "Deny all inbound traffic",
                             "protocol": "*",
                             "sourcePortRange": "*",
@@ -156,7 +135,9 @@
                     },
                     {
                         "name": "AllowVnetOutBound",
+                        "etag": "W/\"2dcf6c76-d885-45a2-8367-8c4fcada94e9\"",
                         "properties": {
+                            "provisioningState": "Succeeded",
                             "description": "Allow outbound traffic from all VMs to all VMs in VNET",
                             "protocol": "*",
                             "sourcePortRange": "*",
@@ -174,7 +155,9 @@
                     },
                     {
                         "name": "AllowInternetOutBound",
+                        "etag": "W/\"2dcf6c76-d885-45a2-8367-8c4fcada94e9\"",
                         "properties": {
+                            "provisioningState": "Succeeded",
                             "description": "Allow outbound traffic from all VMs to Internet",
                             "protocol": "*",
                             "sourcePortRange": "*",
@@ -192,7 +175,9 @@
                     },
                     {
                         "name": "DenyAllOutBound",
+                        "etag": "W/\"2dcf6c76-d885-45a2-8367-8c4fcada94e9\"",
                         "properties": {
+                            "provisioningState": "Succeeded",
                             "description": "Deny all outbound traffic",
                             "protocol": "*",
                             "sourcePortRange": "*",
@@ -215,14 +200,16 @@
             "type": "Microsoft.Network/networkSecurityGroups",
             "apiVersion": "2019-06-01",
             "name": "[parameters('networkSecurityGroups_frontendSERVER_nsg_name')]",
-            "location": "[resourceGroup().location]",
+            "location": "southcentralus",
             "tags": {
-                "BeardSite": "[resourceGroup().tags.BeardSite]"
+                "BeardSite": "Main"
             },
             "properties": {
+                "provisioningState": "Succeeded",
                 "securityRules": [
                     {
                         "name": "SSH",
+                        "etag": "W/\"afdb025b-40eb-4c9c-9e1d-84c747692008\"",
                         "properties": {
                             "provisioningState": "Succeeded",
                             "protocol": "TCP",
@@ -241,7 +228,9 @@
                     },
                     {
                         "name": "HTTPS",
+                        "etag": "W/\"afdb025b-40eb-4c9c-9e1d-84c747692008\"",
                         "properties": {
+                            "provisioningState": "Succeeded",
                             "protocol": "TCP",
                             "sourcePortRange": "*",
                             "destinationPortRange": "443",
@@ -258,7 +247,9 @@
                     },
                     {
                         "name": "HTTP",
+                        "etag": "W/\"afdb025b-40eb-4c9c-9e1d-84c747692008\"",
                         "properties": {
+                            "provisioningState": "Succeeded",
                             "protocol": "TCP",
                             "sourcePortRange": "*",
                             "destinationPortRange": "80",
@@ -277,7 +268,9 @@
                 "defaultSecurityRules": [
                     {
                         "name": "AllowVnetInBound",
+                        "etag": "W/\"afdb025b-40eb-4c9c-9e1d-84c747692008\"",
                         "properties": {
+                            "provisioningState": "Succeeded",
                             "description": "Allow inbound traffic from all VMs in VNET",
                             "protocol": "*",
                             "sourcePortRange": "*",
@@ -295,7 +288,9 @@
                     },
                     {
                         "name": "AllowAzureLoadBalancerInBound",
+                        "etag": "W/\"afdb025b-40eb-4c9c-9e1d-84c747692008\"",
                         "properties": {
+                            "provisioningState": "Succeeded",
                             "description": "Allow inbound traffic from azure load balancer",
                             "protocol": "*",
                             "sourcePortRange": "*",
@@ -313,7 +308,9 @@
                     },
                     {
                         "name": "DenyAllInBound",
+                        "etag": "W/\"afdb025b-40eb-4c9c-9e1d-84c747692008\"",
                         "properties": {
+                            "provisioningState": "Succeeded",
                             "description": "Deny all inbound traffic",
                             "protocol": "*",
                             "sourcePortRange": "*",
@@ -331,7 +328,9 @@
                     },
                     {
                         "name": "AllowVnetOutBound",
+                        "etag": "W/\"afdb025b-40eb-4c9c-9e1d-84c747692008\"",
                         "properties": {
+                            "provisioningState": "Succeeded",
                             "description": "Allow outbound traffic from all VMs to all VMs in VNET",
                             "protocol": "*",
                             "sourcePortRange": "*",
@@ -349,7 +348,9 @@
                     },
                     {
                         "name": "AllowInternetOutBound",
+                        "etag": "W/\"afdb025b-40eb-4c9c-9e1d-84c747692008\"",
                         "properties": {
+                            "provisioningState": "Succeeded",
                             "description": "Allow outbound traffic from all VMs to Internet",
                             "protocol": "*",
                             "sourcePortRange": "*",
@@ -367,7 +368,9 @@
                     },
                     {
                         "name": "DenyAllOutBound",
+                        "etag": "W/\"afdb025b-40eb-4c9c-9e1d-84c747692008\"",
                         "properties": {
+                            "provisioningState": "Succeeded",
                             "description": "Deny all outbound traffic",
                             "protocol": "*",
                             "sourcePortRange": "*",
@@ -389,16 +392,39 @@
         {
             "type": "Microsoft.Network/publicIPAddresses",
             "apiVersion": "2019-06-01",
-            "name": "[parameters('publicIPAddresses_frontendSERVER_ip_name')]",
-            "location": "[resourceGroup().location]",
+            "name": "[parameters('publicIPAddresses_backendSERVER_ip_name')]",
+            "location": "southcentralus",
             "tags": {
-                "BeardSite": "[resourceGroup().tags.BeardSite]"
+                "BeardSite": "Main"
             },
             "sku": {
                 "name": "Basic",
                 "tier": "Regional"
             },
             "properties": {
+                "provisioningState": "Succeeded",
+                "ipAddress": "23.98.155.196",
+                "publicIPAddressVersion": "IPv4",
+                "publicIPAllocationMethod": "Dynamic",
+                "idleTimeoutInMinutes": 4,
+                "ipTags": []
+            }
+        },
+        {
+            "type": "Microsoft.Network/publicIPAddresses",
+            "apiVersion": "2019-06-01",
+            "name": "[parameters('publicIPAddresses_frontendSERVER_ip_name')]",
+            "location": "southcentralus",
+            "tags": {
+                "BeardSite": "Main"
+            },
+            "sku": {
+                "name": "Basic",
+                "tier": "Regional"
+            },
+            "properties": {
+                "provisioningState": "Succeeded",
+                "ipAddress": "70.37.77.185",
                 "publicIPAddressVersion": "IPv4",
                 "publicIPAllocationMethod": "Dynamic",
                 "idleTimeoutInMinutes": 4,
@@ -408,24 +434,25 @@
         {
             "type": "Microsoft.Network/virtualNetworks",
             "apiVersion": "2019-06-01",
-            "name": "[parameters('virtualNetworks_BeardEast_vnet_name')]",
-            "location": "[resourceGroup().location]",
+            "name": "[parameters('virtualNetworks_BeardSite_vnet_name')]",
+            "location": "southcentralus",
             "tags": {
-                "BeardSite": "[resourceGroup().tags.BeardSite]"
+                "BeardSite": "Main"
             },
             "properties": {
                 "provisioningState": "Succeeded",
                 "addressSpace": {
                     "addressPrefixes": [
-                        "10.0.3.0/24"
+                        "10.0.4.0/24"
                     ]
                 },
                 "subnets": [
                     {
                         "name": "default",
+                        "etag": "W/\"1fff7565-ecae-4289-9577-bc407623ad97\"",
                         "properties": {
                             "provisioningState": "Succeeded",
-                            "addressPrefix": "10.0.3.0/24",
+                            "addressPrefix": "10.0.4.0/24",
                             "delegations": [],
                             "privateEndpointNetworkPolicies": "Enabled",
                             "privateLinkServiceNetworkPolicies": "Enabled"
@@ -441,12 +468,12 @@
             "type": "Microsoft.Compute/virtualMachines",
             "apiVersion": "2019-03-01",
             "name": "[parameters('virtualMachines_backendSERVER_name')]",
-            "location": "[resourceGroup().location]",
+            "location": "southcentralus",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_backendserver335_name'))]"
+                "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_backendserver889_name'))]"
             ],
             "tags": {
-                "BeardSite": "[resourceGroup().tags.BeardSite]"
+                "BeardSite": "Main"
             },
             "properties": {
                 "hardwareProfile": {
@@ -461,11 +488,11 @@
                     },
                     "osDisk": {
                         "osType": "Windows",
-                        "name": "[concat(parameters('virtualMachines_backendSERVER_name'), '_OsDisk_1_59b1d941ab1e4e75885d1895fa03e847')]",
+                        "name": "[concat(parameters('virtualMachines_backendSERVER_name'), '_OsDisk_1_ef3ab3c577ea4dd5827852baae056008')]",
                         "createOption": "FromImage",
                         "caching": "ReadWrite",
                         "managedDisk": {
-                            "storageAccountType": "Standard_LRS"
+                            "storageAccountType": "Standard_LRS",
                         },
                         "diskSizeGB": 127
                     },
@@ -485,7 +512,7 @@
                 "networkProfile": {
                     "networkInterfaces": [
                         {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_backendserver335_name'))]"
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_backendserver889_name'))]"
                         }
                     ]
                 }
@@ -495,12 +522,12 @@
             "type": "Microsoft.Compute/virtualMachines",
             "apiVersion": "2019-03-01",
             "name": "[parameters('virtualMachines_frontendSERVER_name')]",
-            "location": "[resourceGroup().location]",
+            "location": "southcentralus",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_frontendserver797_name'))]"
+                "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_frontendserver859_name'))]"
             ],
             "tags": {
-                "BeardSite": "[resourceGroup().tags.BeardSite]"
+                "BeardSite": "Main"
             },
             "properties": {
                 "hardwareProfile": {
@@ -515,11 +542,11 @@
                     },
                     "osDisk": {
                         "osType": "Linux",
-                        "name": "[concat(parameters('virtualMachines_frontendSERVER_name'), '_OsDisk_1_6d68b384860f4115af1d5c422ab394b4')]",
+                        "name": "[concat(parameters('virtualMachines_frontendSERVER_name'), '_OsDisk_1_c6d33243208549028193e578673837b9')]",
                         "createOption": "FromImage",
                         "caching": "ReadWrite",
                         "managedDisk": {
-                            "storageAccountType": "Standard_LRS"
+                            "storageAccountType": "Standard_LRS",
                         },
                         "diskSizeGB": 30
                     },
@@ -539,7 +566,7 @@
                 "networkProfile": {
                     "networkInterfaces": [
                         {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_frontendserver797_name'))]"
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_frontendserver859_name'))]"
                         }
                     ]
                 }
@@ -553,6 +580,7 @@
                 "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_frontendSERVER_nsg_name'))]"
             ],
             "properties": {
+                "provisioningState": "Succeeded",
                 "protocol": "TCP",
                 "sourcePortRange": "*",
                 "destinationPortRange": "80",
@@ -598,6 +626,8 @@
                 "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_backendSERVER_nsg_name'))]"
             ],
             "properties": {
+                "provisioningState": "Succeeded",
+                "resourceGuid": "8ae4ff1b-d202-4fcf-b92e-39b173441201",
                 "protocol": "TCP",
                 "sourcePortRange": "*",
                 "destinationPortRange": "3389",
@@ -620,6 +650,7 @@
                 "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_frontendSERVER_nsg_name'))]"
             ],
             "properties": {
+                "provisioningState": "Succeeded",
                 "protocol": "TCP",
                 "sourcePortRange": "*",
                 "destinationPortRange": "22",
@@ -637,12 +668,13 @@
         {
             "type": "Microsoft.Network/virtualNetworks/subnets",
             "apiVersion": "2019-06-01",
-            "name": "[concat(parameters('virtualNetworks_BeardEast_vnet_name'), '/default')]",
+            "name": "[concat(parameters('virtualNetworks_BeardSite_vnet_name'), '/default')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_BeardEast_vnet_name'))]"
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_BeardSite_vnet_name'))]"
             ],
             "properties": {
-                "addressPrefix": "10.0.3.0/24",
+                "provisioningState": "Succeeded",
+                "addressPrefix": "10.0.4.0/24",
                 "delegations": [],
                 "privateEndpointNetworkPolicies": "Enabled",
                 "privateLinkServiceNetworkPolicies": "Enabled"
@@ -651,24 +683,31 @@
         {
             "type": "Microsoft.Network/networkInterfaces",
             "apiVersion": "2019-06-01",
-            "name": "[parameters('networkInterfaces_backendserver335_name')]",
-            "location": "[resourceGroup().location]",
+            "name": "[parameters('networkInterfaces_backendserver889_name')]",
+            "location": "southcentralus",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_BeardEast_vnet_name'), 'default')]",
+                "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_backendSERVER_ip_name'))]",
+                "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_BeardSite_vnet_name'), 'default')]",
                 "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_backendSERVER_nsg_name'))]"
             ],
             "tags": {
-                "BeardSite": "[resourceGroup().tags.BeardSite]"
+                "BeardSite": "Main"
             },
             "properties": {
+                "provisioningState": "Succeeded",
                 "ipConfigurations": [
                     {
                         "name": "ipconfig1",
+                        "etag": "W/\"9cd16fd5-3483-47d5-bd30-52d4889abe59\"",
                         "properties": {
-                            "privateIPAddress": "10.0.3.4",
+                            "provisioningState": "Succeeded",
+                            "privateIPAddress": "10.0.4.4",
                             "privateIPAllocationMethod": "Dynamic",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_backendSERVER_ip_name'))]"
+                            },
                             "subnet": {
-                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_BeardEast_vnet_name'), 'default')]"
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_BeardSite_vnet_name'), 'default')]"
                             },
                             "primary": true,
                             "privateIPAddressVersion": "IPv4"
@@ -678,9 +717,9 @@
                 "dnsSettings": {
                     "dnsServers": [],
                     "appliedDnsServers": [],
-                    "internalDomainNameSuffix": "lm2hk5xqd0yuviuttjlt41j4hc.cx.internal.cloudapp.net"
+                    "internalDomainNameSuffix": "0sz2lgirpwrupj212ibswmeumh.jx.internal.cloudapp.net"
                 },
-                "macAddress": "00-0D-3A-04-14-09",
+                "macAddress": "00-0D-3A-74-02-09",
                 "enableAcceleratedNetworking": false,
                 "enableIPForwarding": false,
                 "networkSecurityGroup": {
@@ -693,28 +732,32 @@
         {
             "type": "Microsoft.Network/networkInterfaces",
             "apiVersion": "2019-06-01",
-            "name": "[parameters('networkInterfaces_frontendserver797_name')]",
-            "location": "[resourceGroup().location]",
+            "name": "[parameters('networkInterfaces_frontendserver859_name')]",
+            "location": "southcentralus",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_frontendSERVER_ip_name'))]",
-                "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_BeardEast_vnet_name'), 'default')]",
+                "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_BeardSite_vnet_name'), 'default')]",
                 "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_frontendSERVER_nsg_name'))]"
             ],
             "tags": {
-                "BeardSite": "[resourceGroup().tags.BeardSite]"
+                "BeardSite": "Main"
             },
             "properties": {
+                "provisioningState": "Succeeded",
+                "resourceGuid": "2b97761e-4931-48b9-8166-1160706ff6ab",
                 "ipConfigurations": [
                     {
                         "name": "ipconfig1",
+                        "etag": "W/\"cdd7a260-6b3d-4278-9507-0b2053d8434d\"",
                         "properties": {
-                            "privateIPAddress": "10.0.3.5",
+                            "provisioningState": "Succeeded",
+                            "privateIPAddress": "10.0.4.5",
                             "privateIPAllocationMethod": "Dynamic",
                             "publicIPAddress": {
                                 "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_frontendSERVER_ip_name'))]"
                             },
                             "subnet": {
-                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_BeardEast_vnet_name'), 'default')]"
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_BeardSite_vnet_name'), 'default')]"
                             },
                             "primary": true,
                             "privateIPAddressVersion": "IPv4"
@@ -724,9 +767,9 @@
                 "dnsSettings": {
                     "dnsServers": [],
                     "appliedDnsServers": [],
-                    "internalDomainNameSuffix": "lm2hk5xqd0yuviuttjlt41j4hc.cx.internal.cloudapp.net"
+                    "internalDomainNameSuffix": "0sz2lgirpwrupj212ibswmeumh.jx.internal.cloudapp.net"
                 },
-                "macAddress": "00-0D-3A-02-15-7F",
+                "macAddress": "00-0D-3A-73-5D-33",
                 "enableAcceleratedNetworking": false,
                 "enableIPForwarding": false,
                 "networkSecurityGroup": {
@@ -736,5 +779,14 @@
                 "tapConfigurations": []
             }
         }
-    ]
+    ],
+    "outputs": {
+        "result": {
+            "value": "It worked!",
+            "type": "string"
+        },
+        "Resources Created": {
+            "value": "[parameters('networkSecurityGroups_backendSERVER_nsg_name')]"
+        }
+    }
 }
