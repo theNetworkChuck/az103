@@ -785,9 +785,9 @@
             "type": "string",
             "value": "It worked!"
         },
-        "Resources Created": {
+        "Virtual Machines": {
             "type": "string",
-            "value": "[parameters('networkSecurityGroups_backendSERVER_nsg_name')]"
+            "value": "[concat(parameters('virtualMachines_backendSERVER_name'), ', ' parameters('virtualMachines_frontendSERVER_name')]"
         }
     }
 }
