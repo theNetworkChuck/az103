@@ -787,7 +787,7 @@
         },
         "Virtual Machines": {
             "type": "string",
-            "value": "[concat(parameters('virtualMachines_backendSERVER_name'), ', ', parameters('virtualMachines_frontendSERVER_name'))]"
+            "value": "[concat(parameters('virtualMachines_backendSERVER_name'), parameters('virtualMachines_frontendSERVER_name'))]"
         }
     }
 }
