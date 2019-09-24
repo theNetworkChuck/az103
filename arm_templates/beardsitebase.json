@@ -1,6 +1,6 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-    "contentVersion": "1.0.0.0",
+    "contentVersion": "1.0.0.1",
     "parameters": {
         "virtualMachines_backendSERVER_name": {
             "defaultValue": "backendSERVER",
@@ -47,7 +47,7 @@
             "name": "[parameters('networkSecurityGroups_backendSERVER_nsg_name')]",
             "location": "[resourceGroup().location]",
             "tags": {
-                "BeardSite": "Main"
+                "BeardSite": "[resourceGroup().location]"
             },
             "properties": {
                 "securityRules": [
@@ -77,7 +77,7 @@
             "name": "[parameters('networkSecurityGroups_frontendSERVER_nsg_name')]",
             "location": "[resourceGroup().location]",
             "tags": {
-                "BeardSite": "Main"
+                "BeardSite": "[resourceGroup().location]"
             },
             "properties": {
                 "securityRules": [
@@ -114,23 +114,6 @@
                             "sourceAddressPrefixes": [],
                             "destinationAddressPrefixes": []
                         }
-                    },
-                    {
-                        "name": "HTTP",
-                        "properties": {
-                            "protocol": "TCP",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "80",
-                            "sourceAddressPrefix": "*",
-                            "destinationAddressPrefix": "*",
-                            "access": "Allow",
-                            "priority": 340,
-                            "direction": "Inbound",
-                            "sourcePortRanges": [],
-                            "destinationPortRanges": [],
-                            "sourceAddressPrefixes": [],
-                            "destinationAddressPrefixes": []
-                        }
                     }
                 ]
             }
@@ -141,7 +124,7 @@
             "name": "[parameters('publicIPAddresses_backendSERVER_ip_name')]",
             "location": "[resourceGroup().location]",
             "tags": {
-                "BeardSite": "Main"
+                "BeardSite": "[resourceGroup().location]"
             },
             "sku": {
                 "name": "Basic",
@@ -161,7 +144,7 @@
             "name": "[parameters('publicIPAddresses_frontendSERVER_ip_name')]",
             "location": "[resourceGroup().location]",
             "tags": {
-                "BeardSite": "Main"
+                "BeardSite": "[resourceGroup().location]"
             },
             "sku": {
                 "name": "Basic",
@@ -181,7 +164,7 @@
             "name": "[parameters('virtualNetworks_BeardSite_vnet_name')]",
             "location": "[resourceGroup().location]",
             "tags": {
-                "BeardSite": "Main"
+                "BeardSite": "[resourceGroup().location]"
             },
             "properties": {
                 "addressSpace": {
@@ -214,7 +197,7 @@
                 "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_backendserver889_name'))]"
             ],
             "tags": {
-                "BeardSite": "Main"
+                "BeardSite": "[resourceGroup().location]"
             },
             "properties": {
                 "hardwareProfile": {
@@ -268,7 +251,7 @@
                 "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_frontendserver859_name'))]"
             ],
             "tags": {
-                "BeardSite": "Main"
+                "BeardSite": "[resourceGroup().location]"
             },
             "properties": {
                 "hardwareProfile": {
@@ -426,7 +409,7 @@
                 "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_backendSERVER_nsg_name'))]"
             ],
             "tags": {
-                "BeardSite": "Main"
+                "BeardSite": "[resourceGroup().location]"
             },
             "properties": {
                 "ipConfigurations": [
@@ -467,7 +450,7 @@
                 "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_frontendSERVER_nsg_name'))]"
             ],
             "tags": {
-                "BeardSite": "Main"
+                "BeardSite": "[resourceGroup().location]"
             },
             "properties": {
                 "ipConfigurations": [
