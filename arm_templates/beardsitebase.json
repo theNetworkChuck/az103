@@ -45,7 +45,7 @@
             "type": "Microsoft.Network/networkSecurityGroups",
             "apiVersion": "2019-07-01",
             "name": "[parameters('networkSecurityGroups_backendSERVER_nsg_name')]",
-            "location": "[resourceGroup().location]",
+            "location": "southcentralus",
             "tags": {
                 "BeardSite": "Main"
             },
@@ -75,7 +75,7 @@
             "type": "Microsoft.Network/networkSecurityGroups",
             "apiVersion": "2019-07-01",
             "name": "[parameters('networkSecurityGroups_frontendSERVER_nsg_name')]",
-            "location": "[resourceGroup().location]",
+            "location": "southcentralus",
             "tags": {
                 "BeardSite": "Main"
             },
@@ -122,7 +122,7 @@
             "type": "Microsoft.Network/publicIPAddresses",
             "apiVersion": "2019-07-01",
             "name": "[parameters('publicIPAddresses_backendSERVER_ip_name')]",
-            "location": "[resourceGroup().location]",
+            "location": "southcentralus",
             "tags": {
                 "BeardSite": "Main"
             },
@@ -142,7 +142,7 @@
             "type": "Microsoft.Network/publicIPAddresses",
             "apiVersion": "2019-07-01",
             "name": "[parameters('publicIPAddresses_frontendSERVER_ip_name')]",
-            "location": "[resourceGroup().location]",
+            "location": "southcentralus",
             "tags": {
                 "BeardSite": "Main"
             },
@@ -162,7 +162,7 @@
             "type": "Microsoft.Network/virtualNetworks",
             "apiVersion": "2019-07-01",
             "name": "[parameters('virtualNetworks_BeardSite_vnet_name')]",
-            "location": "[resourceGroup().location]",
+            "location": "southcentralus",
             "tags": {
                 "BeardSite": "Main"
             },
@@ -192,7 +192,7 @@
             "type": "Microsoft.Compute/virtualMachines",
             "apiVersion": "2019-03-01",
             "name": "[parameters('virtualMachines_backendSERVER_name')]",
-            "location": "[resourceGroup().location]",
+            "location": "southcentralus",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_backendserver889_name'))]"
             ],
@@ -246,7 +246,7 @@
             "type": "Microsoft.Compute/virtualMachines",
             "apiVersion": "2019-03-01",
             "name": "[parameters('virtualMachines_frontendSERVER_name')]",
-            "location": "[resourceGroup().location]",
+            "location": "southcentralus",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_frontendserver859_name'))]"
             ],
@@ -402,7 +402,7 @@
             "type": "Microsoft.Network/networkInterfaces",
             "apiVersion": "2019-07-01",
             "name": "[parameters('networkInterfaces_backendserver889_name')]",
-            "location": "[resourceGroup().location]",
+            "location": "southcentralus",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_backendSERVER_ip_name'))]",
                 "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_BeardSite_vnet_name'), 'default')]",
@@ -443,7 +443,7 @@
             "type": "Microsoft.Network/networkInterfaces",
             "apiVersion": "2019-07-01",
             "name": "[parameters('networkInterfaces_frontendserver859_name')]",
-            "location": "[resourceGroup().location]",
+            "location": "southcentralus",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_frontendSERVER_ip_name'))]",
                 "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_BeardSite_vnet_name'), 'default')]",
