@@ -14,7 +14,7 @@
             "type": "Microsoft.Network/virtualNetworks",
             "apiVersion": "2019-09-01",
             "name": "[variables('vnet_diagonalley')]",
-            "location": "eastus2",
+            "location": "[resourceGroup().location]",
             "properties": {
                 "addressSpace": {
                     "addressPrefixes": [
@@ -42,7 +42,7 @@
             "type": "Microsoft.Network/virtualNetworks",
             "apiVersion": "2019-09-01",
             "name": "[variables('vnet_Hogsmeade')]",
-            "location": "eastus2",
+            "location": "[resourceGroup().location]",
             "properties": {
                 "addressSpace": {
                     "addressPrefixes": [
@@ -89,7 +89,7 @@
             "type": "Microsoft.Network/virtualNetworks",
             "apiVersion": "2019-09-01",
             "name": "[variables('vnet_hogwarts')]",
-            "location": "eastus2",
+            "location": "[resourceGroup().location]",
             "properties": {
                 "addressSpace": {
                     "addressPrefixes": [
@@ -146,7 +146,7 @@
             "type": "Microsoft.Network/virtualNetworks",
             "apiVersion": "2019-09-01",
             "name": "[variables('vnet_knockturnalley')]",
-            "location": "eastus2",
+            "location": "[resourceGroup().location]",
             "properties": {
                 "addressSpace": {
                     "addressPrefixes": [
