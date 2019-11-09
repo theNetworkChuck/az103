@@ -150,14 +150,14 @@
             "properties": {
                 "addressSpace": {
                     "addressPrefixes": [
-                        "10.3.0.0/16"
+                        "10.4.0.0/16"
                     ]
                 },
                 "subnets": [
                     {
                         "name": "borginandburkes",
                         "properties": {
-                            "addressPrefix": "10.3.0.0/24",
+                            "addressPrefix": "10.4.0.0/24",
                             "delegations": [],
                             "privateEndpointNetworkPolicies": "Enabled",
                             "privateLinkServiceNetworkPolicies": "Enabled"
@@ -177,7 +177,7 @@
                 "[resourceId('Microsoft.Network/virtualNetworks', variables('vnet_knockturnalley'))]"
             ],
             "properties": {
-                "addressPrefix": "10.3.0.0/24",
+                "addressPrefix": "10.4.0.0/24",
                 "delegations": [],
                 "privateEndpointNetworkPolicies": "Enabled",
                 "privateLinkServiceNetworkPolicies": "Enabled"
